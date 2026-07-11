@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulary Brain — GNP Market Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+/* ============================= TOKENS ============================= */
+:root{
+  --paper:#EEF0E5;
+  --paper-raised:#F8F9F2;
+  --paper-deep:#E4E7D9;
+  --ink:#12241F;
+  --ink-soft:#41524C;
+  --ink-faint:#7C8C85;
+  --line:rgba(18,36,31,0.14);
+  --line-strong:rgba(18,36,31,0.28);
+  --seal:#9E3527;
+  --seal-soft:#F1DAD2;
+  --gold:#A8842F;
+  --gold-soft:#F0E6C8;
+  --green:#1F6F4F;
+  --green-soft:#DCEFE1;
+  --red:#9E3527;
+  --focus:#1F6F4F;
+  --font-display:'Source Serif 4', Georgia, serif;
+  --font-body:'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+  --radius:3px;
+  --shadow-card:0 1px 2px rgba(18,36,31,0.06), 0 1px 0 rgba(18,36,31,0.04);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--gold-soft); color:var(--ink);}
+a{color:inherit;}
+button{font-family:inherit;}
+:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
+
+/* subtle paper texture via layered gradients */
+body::before{
+  content:"";
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(18,36,31,0.035) 1px, transparent 0);
+  background-size:22px 22px;
+  opacity:.5;
+}
+
+.wrap{position:relative; z-index:1;}
+
+/* ============================= HEADER ============================= */
+header.top{
+  border-bottom:1px solid var(--line);
+  background:var(--paper-raised);
+  position:sticky; top:0; z-index:40;
+  backdrop-filter:blur(6px);
+}
+.top-inner{
+  max-width:1440px; margin:0 auto;
+  padding:14px 28px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.brand{display:flex; align-items:center; gap:12px;}
+.brand-mark{
+  width:36px; height:36px; border-radius:50%;
+  border:1.5px solid var(--ink);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-weight:600; font-size:15px;
+  flex-shrink:0;
+}
+.brand-text .name{font-family:var(--font-display); font-weight:600; font-size:17px; letter-spacing:.2px;}
+.brand-text .sub{font-size:11px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:1.2px; margin-top:1px;}
+.top-meta{display:flex; align-items:center; gap:22px; font-family:var(--font-mono); font-size:11.5px; color:var(--ink-soft);}
+.top-meta .dot{width:6px; height:6px; border-radius:50%; background:var(--green); display:inline-block; margin-right:6px; box-shadow:0 0 0 3px var(--green-soft);}
+.top-meta span.label{color:var(--ink-faint); text-transform:uppercase; letter-spacing:1px; font-size:9.5px; display:block; margin-bottom:1px;}
+
+/* ============================= HERO ============================= */
+.hero{
+  max-width:1440px; margin:0 auto;
+  padding:52px 28px 34px;
+  display:grid; grid-template-columns:1.3fr 1fr; gap:48px; align-items:end;
+  border-bottom:1px solid var(--line);
+}
+.hero h1{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:clamp(32px,4vw,50px);
+  line-height:1.06;
+  margin:0 0 16px;
+  letter-spacing:-.5px;
+}
+.hero h1 em{font-style:italic; color:var(--green); font-weight:500;}
+.hero p.lede{
+  font-size:15.5px; color:var(--ink-soft); max-width:52ch; margin:0;
+}
+.hero-eyebrow{
+  font-family:var(--font-mono); font-size:11px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--seal); margin-bottom:14px; display:flex; align-items:center; gap:8px;
+}
+.hero-eyebrow::before{content:""; width:22px; height:1px; background:var(--seal);}
+
+.kpi-row{display:grid; grid-template-columns:repeat(4,1fr); gap:0; border:1px solid var(--line); background:var(--paper-raised);}
+.kpi{padding:16px 18px; border-right:1px solid var(--line);}
+.kpi:last-child{border-right:none;}
+.kpi .v{font-family:var(--font-mono); font-size:22px; font-weight:600; letter-spacing:-.5px;}
+.kpi .l{font-size:10.5px; text-transform:uppercase; letter-spacing:.9px; color:var(--ink-faint); margin-top:4px;}
+.kpi .d{font-size:11px; margin-top:5px; font-family:var(--font-mono);}
+.kpi .d.up{color:var(--green);}
+.kpi .d.down{color:var(--red);}
+
+/* ============================= LAYOUT ============================= */
+.workspace{
+  max-width:1440px; margin:0 auto;
+  padding:30px 28px 80px;
+  display:grid; grid-template-columns:1fr 400px; gap:26px; align-items:start;
+}
+@media (max-width:1080px){
+  .workspace{grid-template-columns:1fr;}
+  .hero{grid-template-columns:1fr;}
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+}
+
+section.panel{
+  background:var(--paper-raised);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow-card);
+  margin-bottom:22px;
+}
+.panel-head{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  padding:16px 20px; border-bottom:1px solid var(--line);
+}
+.panel-head h2{
+  font-family:var(--font-display); font-size:18px; font-weight:600; margin:0;
+  display:flex; align-items:center; gap:9px;
+}
+.panel-head .idx{
+  font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint);
+  border:1px solid var(--line-strong); border-radius:50%; width:19px; height:19px;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.panel-head p{margin:0; font-size:12px; color:var(--ink-faint); font-family:var(--font-mono);}
+.panel-body{padding:18px 20px;}
+
+/* ---------- filters ---------- */
+.filters{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+@media (max-width:760px){.filters{grid-template-columns:1fr 1fr;}}
+.field label{font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:var(--ink-faint); display:block; margin-bottom:5px;}
+.field select, .field input{
+  width:100%; padding:8px 9px; font-family:var(--font-body); font-size:13px;
+  border:1px solid var(--line-strong); background:var(--paper); color:var(--ink); border-radius:2px;
+}
+.field select:focus, .field input:focus{background:#fff;}
+.btn{
+  display:inline-flex; align-items:center; gap:7px; cursor:pointer;
+  border:1px solid var(--ink); background:var(--ink); color:var(--paper-raised);
+  padding:8px 14px; font-size:12.5px; font-weight:600; letter-spacing:.3px;
+  border-radius:2px; transition:background .15s, color .15s;
+}
+.btn:hover{background:var(--green); border-color:var(--green);}
+.btn.ghost{background:transparent; color:var(--ink); border:1px solid var(--line-strong);}
+.btn.ghost:hover{border-color:var(--ink); background:transparent; color:var(--ink);}
+.btn.small{padding:5px 10px; font-size:11px;}
+.filter-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:12px;}
+
+/* ---------- chips ---------- */
+.chip-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+.chip{
+  font-family:var(--font-mono); font-size:11px; padding:6px 10px;
+  border:1px solid var(--line-strong); border-radius:20px; cursor:pointer; background:var(--paper);
+  color:var(--ink-soft); transition:all .15s;
+}
+.chip:hover{border-color:var(--green); color:var(--green); background:var(--green-soft);}
+
+/* ---------- chart ---------- */
+.chart-holder{height:340px; position:relative;}
+
+/* ---------- table ---------- */
+table.data{width:100%; border-collapse:collapse; font-size:12.5px;}
+table.data th{
+  text-align:left; font-family:var(--font-mono); font-size:10px; text-transform:uppercase;
+  letter-spacing:.6px; color:var(--ink-faint); font-weight:600; padding:9px 10px; border-bottom:1px solid var(--line-strong);
+  cursor:pointer; user-select:none; white-space:nowrap;
+}
+table.data th:hover{color:var(--ink);}
+table.data td{padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:middle;}
+table.data tr:hover td{background:var(--paper-deep); cursor:pointer;}
+table.data td.num{font-family:var(--font-mono); text-align:right; white-space:nowrap;}
+.tag{
+  display:inline-block; font-family:var(--font-mono); font-size:9.5px; padding:2px 6px; border-radius:2px;
+  text-transform:uppercase; letter-spacing:.4px;
+}
+.tag.gnp{background:var(--gold-soft); color:#7A5F1E; border:1px solid var(--gold);}
+.tag.mono{background:var(--seal-soft); color:var(--seal); border:1px solid var(--seal);}
+.tag.frag{background:var(--green-soft); color:var(--green); border:1px solid var(--green);}
+.pct.up{color:var(--green); font-weight:600;}
+.pct.down{color:var(--red); font-weight:600;}
+
+/* ---------- opportunity cards (signature element) ---------- */
+.opp-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px;}
+.opp-card{
+  border:1px solid var(--line-strong);
+  background:var(--paper);
+  padding:16px 16px 14px;
+  position:relative;
+  cursor:pointer;
+  transition:transform .12s, box-shadow .12s;
+}
+.opp-card:hover{transform:translateY(-2px); box-shadow:0 6px 16px rgba(18,36,31,0.10);}
+.opp-seal{
+  position:absolute; top:-10px; right:14px;
+  width:46px; height:46px; border-radius:50%;
+  background:var(--paper-raised); border:2px solid var(--seal);
+  display:flex; align-items:center; justify-content:center; flex-direction:column;
+  transform:rotate(6deg);
+  box-shadow:0 2px 5px rgba(18,36,31,0.15);
+}
+.opp-seal .n{font-family:var(--font-mono); font-weight:700; font-size:14px; color:var(--seal); line-height:1;}
+.opp-seal .u{font-family:var(--font-mono); font-size:6.5px; color:var(--seal); letter-spacing:.5px;}
+.opp-card .cat{font-family:var(--font-mono); font-size:9.5px; text-transform:uppercase; letter-spacing:.7px; color:var(--ink-faint); margin-bottom:6px; padding-right:40px;}
+.opp-card h3{font-family:var(--font-display); font-size:16.5px; font-weight:600; margin:0 0 10px; line-height:1.25; padding-right:36px;}
+.opp-stats{display:flex; gap:14px; margin-top:8px; flex-wrap:wrap;}
+.opp-stats .s{font-family:var(--font-mono); font-size:11px;}
+.opp-stats .s b{display:block; font-size:14.5px; margin-top:1px;}
+.opp-card .why{font-size:11.5px; color:var(--ink-soft); margin-top:10px; padding-top:10px; border-top:1px dashed var(--line-strong); line-height:1.45;}
+
+/* ============================= AI CHAT PANEL ============================= */
+.ai-panel{position:sticky; top:78px; display:flex; flex-direction:column; height:calc(100vh - 100px); min-height:520px;}
+.ai-panel .panel-head{background:var(--ink); color:var(--paper-raised); border-bottom:none;}
+.ai-panel .panel-head h2{color:var(--paper-raised);}
+.ai-panel .panel-head .idx{border-color:rgba(238,240,229,.4); color:rgba(238,240,229,.7);}
+.ai-panel .panel-head p{color:rgba(238,240,229,.55);}
+.ai-status{display:flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:10px; color:rgba(238,240,229,.6);}
+.ai-status .dot{width:5px; height:5px; border-radius:50%; background:#4CAF7D;}
+
+.ai-body{flex:1; display:flex; flex-direction:column; min-height:0;}
+.ai-scroll{flex:1; overflow-y:auto; padding:16px 18px; display:flex; flex-direction:column; gap:14px;}
+.ai-scroll::-webkit-scrollbar{width:8px;}
+.ai-scroll::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:4px;}
+
+.msg{max-width:100%;}
+.msg .role{font-family:var(--font-mono); font-size:9.5px; text-transform:uppercase; letter-spacing:.8px; color:var(--ink-faint); margin-bottom:5px;}
+.msg.user{align-self:flex-end; max-width:88%;}
+.msg.user .bubble{background:var(--ink); color:var(--paper-raised); padding:9px 12px; border-radius:10px 10px 2px 10px; font-size:13.5px;}
+.msg.assistant .bubble{background:var(--paper); border:1px solid var(--line); padding:11px 13px; border-radius:2px 10px 10px 10px; font-size:13.5px; line-height:1.55;}
+.msg.assistant .bubble p{margin:0 0 8px;}
+.msg.assistant .bubble p:last-child{margin-bottom:0;}
+.msg.assistant .bubble strong{color:var(--seal);}
+.msg.assistant .bubble ul{margin:6px 0; padding-left:18px;}
+.msg.assistant .bubble li{margin-bottom:4px;}
+.tool-badge{
+  display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:10px;
+  color:var(--green); background:var(--green-soft); border:1px solid var(--green); padding:4px 9px;
+  border-radius:20px; margin-bottom:6px;
+}
+.tool-badge .spin{width:7px; height:7px; border-radius:50%; border:1.5px solid var(--green); border-top-color:transparent; animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.ai-prompts{padding:0 18px 12px; display:flex; flex-wrap:wrap; gap:6px;}
+.ai-input-row{
+  padding:14px 16px; border-top:1px solid var(--line); display:flex; gap:8px; background:var(--paper-raised);
+}
+.ai-input-row textarea{
+  flex:1; resize:none; border:1px solid var(--line-strong); border-radius:3px; padding:9px 11px;
+  font-family:var(--font-body); font-size:13.5px; background:var(--paper); color:var(--ink); max-height:100px;
+}
+.ai-input-row textarea:focus{background:#fff;}
+.send-btn{
+  width:40px; height:40px; border-radius:50%; border:none; background:var(--seal); color:#fff;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .15s;
+}
+.send-btn:hover{background:#7E2B20;}
+.send-btn:disabled{background:var(--ink-faint); cursor:not-allowed;}
+
+.ai-empty{padding:26px 18px; text-align:center; color:var(--ink-faint);}
+.ai-empty .mark{width:44px; height:44px; border-radius:50%; border:1.5px dashed var(--line-strong); margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:18px;}
+.ai-empty p{font-size:12.5px; max-width:32ch; margin:0 auto; line-height:1.5;}
+
+/* ---------- detail drawer ---------- */
+.drawer-backdrop{position:fixed; inset:0; background:rgba(18,36,31,.35); z-index:90; display:none;}
+.drawer-backdrop.open{display:block;}
+.drawer{
+  position:fixed; top:0; right:0; height:100%; width:min(480px,92vw); background:var(--paper-raised);
+  z-index:91; transform:translateX(100%); transition:transform .25s ease; box-shadow:-8px 0 30px rgba(18,36,31,.2);
+  display:flex; flex-direction:column;
+}
+.drawer.open{transform:translateX(0);}
+.drawer-head{padding:20px 22px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:flex-start;}
+.drawer-head h3{font-family:var(--font-display); font-size:20px; margin:0 0 4px;}
+.drawer-close{background:none; border:none; cursor:pointer; font-size:20px; color:var(--ink-faint); line-height:1;}
+.drawer-body{padding:20px 22px; overflow-y:auto; flex:1;}
+.drawer-chart{height:220px; margin-bottom:18px;}
+.dstat-row{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px;}
+.dstat{border:1px solid var(--line); padding:10px 12px; background:var(--paper);}
+.dstat .l{font-size:9.5px; text-transform:uppercase; letter-spacing:.6px; color:var(--ink-faint);}
+.dstat .v{font-family:var(--font-mono); font-size:17px; margin-top:3px;}
+
+footer{
+  border-top:1px solid var(--line); padding:22px 28px; max-width:1440px; margin:0 auto;
+  display:flex; justify-content:space-between; font-size:11px; color:var(--ink-faint); font-family:var(--font-mono);
+}
+
+.loading-screen{
+  position:fixed; inset:0; background:var(--paper); z-index:200; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px;
+}
+.loading-screen .mark{width:60px; height:60px; border-radius:50%; border:1.5px solid var(--ink); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:24px; animation:pulse 1.6s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.4;}}
+.loading-screen p{font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint); letter-spacing:.5px;}
+.hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<div class="loading-screen" id="loadingScreen">
+  <div class="mark">GNP</div>
+  <p id="loadingText">READING 42,246 SKU RECORDS…</p>
+</div>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <div class="brand-mark">GNP</div>
+      <div class="brand-text">
+        <div class="name">Formulary Brain</div>
+        <div class="sub">Egypt Market Intelligence · Global Napi Pharmaceuticals</div>
+      </div>
+    </div>
+    <div class="top-meta">
+      <div><span class="label">Coverage</span>2021 – 2026 YTD</div>
+      <div><span class="label">Records</span><span id="metaRecords">—</span> SKUs</div>
+      <div><span class="dot"></span>Live on device</div>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div>
+    <div class="hero-eyebrow">Business Development · Pipeline Intelligence</div>
+    <h1>Every Egyptian&nbsp;<em>SKU</em>, molecule and mover — read for openings.</h1>
+    <p class="lede">This ledger holds the full IQVIA-style record of Egypt's pharmaceutical market since 2021 — 42,246 SKUs, 1,978 molecules, 1,464 corporations. Ask it a question, or let it point at the white space itself.</p>
+  </div>
+  <div class="kpi-row" id="kpiRow">
+    <div class="kpi"><div class="v">—</div><div class="l">Market Value 2025</div></div>
+    <div class="kpi"><div class="v">—</div><div class="l">YoY Growth 24→25</div></div>
+    <div class="kpi"><div class="v">—</div><div class="l">ATC4 Categories</div></div>
+    <div class="kpi"><div class="v">—</div><div class="l">GNP SKUs Tracked</div></div>
+  </div>
+</div>
+
+<div class="workspace">
+
+  <div class="col-main">
+
+    <!-- OPPORTUNITY LEADERBOARD -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2><span class="idx">01</span>Opportunity Leaderboard</h2>
+        <p>Fragmented + fast-growing + GNP-absent, scored automatically</p>
+      </div>
+      <div class="panel-body">
+        <div class="opp-grid" id="oppGrid"></div>
+      </div>
+    </section>
+
+    <!-- EXPLORER -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2><span class="idx">02</span>Market Explorer</h2>
+        <p>Filter · rank · inspect</p>
+      </div>
+      <div class="panel-body">
+        <div class="filters">
+          <div class="field">
+            <label for="fGroupBy">Group by</label>
+            <select id="fGroupBy">
+              <option value="atc4">ATC4 category</option>
+              <option value="molecule">Molecule</option>
+              <option value="corporation">Corporation</option>
+              <option value="product">Product / brand</option>
+              <option value="nfc3">Dosage form</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fMetric">Rank by</label>
+            <select id="fMetric">
+              <option value="value_2025">2025 market value</option>
+              <option value="cagr">CAGR 2021→2025</option>
+              <option value="yoy_growth">YoY growth 24→25</option>
+              <option value="hhi">Fragmentation (low HHI first)</option>
+              <option value="player_count">Competitor count</option>
+              <option value="ytd_2026">2026 YTD value</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fSearch">Contains text</label>
+            <input id="fSearch" type="text" placeholder="e.g. GLP-1, insulin, nephro…">
+          </div>
+          <div class="field">
+            <label for="fScope">Scope</label>
+            <select id="fScope">
+              <option value="all">All corporations</option>
+              <option value="exclude_gnp">Excluding GNP</option>
+              <option value="gnp_only">GNP only</option>
+            </select>
+          </div>
+        </div>
+        <div class="filter-actions">
+          <button class="btn ghost small" id="resetFilters">Reset</button>
+          <button class="btn small" id="applyFilters">Run query</button>
+        </div>
+
+        <div style="height:16px;"></div>
+        <div class="chart-holder"><canvas id="mainChart"></canvas></div>
+        <div style="height:18px;"></div>
+        <div style="overflow-x:auto;">
+          <table class="data" id="mainTable">
+            <thead>
+              <tr>
+                <th data-k="label">Name</th>
+                <th data-k="value_2025" class="num">2025 Value</th>
+                <th data-k="cagr" class="num">CAGR 21→25</th>
+                <th data-k="yoy_growth" class="num">YoY 24→25</th>
+                <th data-k="player_count" class="num">Players</th>
+                <th data-k="hhi" class="num">HHI</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="mainTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- AI ANALYST -->
+  <section class="panel ai-panel">
+    <div class="panel-head">
+      <div>
+        <h2><span class="idx" style="border-color:rgba(238,240,229,.4)">AI</span>Formulary Analyst</h2>
+        <p>Reads the full ledger live, cites real figures</p>
+      </div>
+      <div class="ai-status"><span class="dot"></span>Ready</div>
+    </div>
+    <div class="ai-body">
+      <div class="ai-scroll" id="aiScroll">
+        <div class="ai-empty" id="aiEmpty">
+          <div class="mark">?</div>
+          <p>Ask about growth pockets, fragmented categories, competitor moves, or where GNP should submit next.</p>
+        </div>
+      </div>
+      <div class="ai-prompts" id="aiPrompts">
+        <span class="chip" data-q="Which ATC4 categories grew fastest between 2021 and 2025 but still have three or fewer competitors?">Fastest-growing, low-competition categories</span>
+        <span class="chip" data-q="Find fragmented, high-growth markets where GNP has no products yet.">White space for GNP</span>
+        <span class="chip" data-q="What is GNP's current market position — total value, categories, and rank versus the top corporations?">GNP's current footprint</span>
+      </div>
+      <div class="ai-input-row">
+        <textarea id="aiInput" rows="1" placeholder="e.g. Where should GNP submit next in nephrology?"></textarea>
+        <button class="send-btn" id="aiSend" aria-label="Send">↑</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <span>Formulary Brain — built on GNP's Business Development Standard Sheet · figures in EGP · 2026 is year-to-date and not a full-year comparable</span>
+  <span>Local-first · no data leaves this browser except your typed questions to the analyst</span>
+</footer>
+
+</div>
+
+<!-- DETAIL DRAWER -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div>
+      <div style="font-family:var(--font-mono); font-size:10px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.6px;" id="drawerKind">—</div>
+      <h3 id="drawerTitle">—</h3>
+    </div>
+    <button class="drawer-close" id="drawerClose">×</button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-chart"><canvas id="drawerChart"></canvas></div>
+    <div class="dstat-row" id="drawerStats"></div>
+    <div id="drawerExtra"></div>
+  </div>
+</div>
+
+<script>
+/* ======================================================================
+   FORMULARY BRAIN — DATA ENGINE + AI TOOL-CALLING AGENT
+   ====================================================================== */
+
+const IDX = {
+  atc4:0, product:1, corp:2, molecule:3, combo:4, nfc3:5, pack:6, launch:7, price:8,
+  u21:9, v21:10, u22:11, v22:12, u23:13, v23:14, u24:15, v24:16, u25:17, v25:18, u26:19, v26:20
+};
+const VAL_FIELDS = {2021:IDX.v21, 2022:IDX.v22, 2023:IDX.v23, 2024:IDX.v24, 2025:IDX.v25, 2026:IDX.v26};
+const UNIT_FIELDS = {2021:IDX.u21, 2022:IDX.u22, 2023:IDX.u23, 2024:IDX.u24, 2025:IDX.u25, 2026:IDX.u26};
+
+let DATA = null; // {atc4,corp,molecule,combo,nfc3,rows,meta}
+let lastQueryResults = []; // for table sort / drawer lookups
+let mainChartInstance = null;
+let drawerChartInstance = null;
+
+function isGnpCorpLabel(label){
+  return label && label.toUpperCase().includes('NAPI');
+}
+
+function fmtEGP(n){
+  if(n===null||n===undefined||isNaN(n)) return '—';
+  const abs = Math.abs(n);
+  if(abs>=1e9) return (n/1e9).toFixed(2)+'B';
+  if(abs>=1e6) return (n/1e6).toFixed(1)+'M';
+  if(abs>=1e3) return (n/1e3).toFixed(0)+'K';
+  return n.toFixed(0);
+}
+function fmtPct(n){
+  if(n===null||n===undefined||isNaN(n)) return '—';
+  return (n>=0?'+':'') + (n*100).toFixed(1)+'%';
+}
+
+/* ---------------------------- LOAD DATA ---------------------------- */
+async function loadData(){
+  const res = await fetch('./data.json');
+  DATA = await res.json();
+  document.getElementById('metaRecords').textContent = DATA.rows.length.toLocaleString();
+}
+
+/* ---------------------------- CORE AGGREGATION ---------------------------- */
+// groupBy: 'atc4'|'molecule'|'corporation'|'product'|'nfc3'
+// filters: {atc4, molecule, corporation, nfc3, combo_type, gnp_only, exclude_gnp}
+function analyzeMarket(opts){
+  opts = opts || {};
+  const groupBy = opts.group_by || 'atc4';
+  const filters = opts.filters || {};
+  const sortBy = opts.sort_by || 'value_2025';
+  const sortDesc = opts.sort_desc !== false;
+  const minValue2025 = (typeof opts.min_value_2025 === 'number') ? opts.min_value_2025 : 1000000;
+  const limit = Math.min(opts.limit || 15, 50);
+
+  const fAtc4 = filters.atc4 ? filters.atc4.toUpperCase() : null;
+  const fMol = filters.molecule ? filters.molecule.toUpperCase() : null;
+  const fCorp = filters.corporation ? filters.corporation.toUpperCase() : null;
+  const fNfc3 = filters.nfc3 ? filters.nfc3.toUpperCase() : null;
+  const fCombo = filters.combo_type ? filters.combo_type.toUpperCase() : null;
+  const gnpOnly = !!filters.gnp_only;
+  const excludeGnp = !!filters.exclude_gnp;
+
+  const groups = new Map(); // key -> accumulator
+
+  for(const r of DATA.rows){
+    const atc4Label = DATA.atc4[r[IDX.atc4]];
+    const corpLabel = DATA.corp[r[IDX.corp]];
+    const molLabel = DATA.molecule[r[IDX.molecule]];
+    const comboLabel = DATA.combo[r[IDX.combo]];
+    const nfc3Label = DATA.nfc3[r[IDX.nfc3]];
+    const productLabel = r[IDX.product];
+
+    if(fAtc4 && !atc4Label.toUpperCase().includes(fAtc4)) continue;
+    if(fMol && !molLabel.toUpperCase().includes(fMol)) continue;
+    if(fCorp && !corpLabel.toUpperCase().includes(fCorp)) continue;
+    if(fNfc3 && !nfc3Label.toUpperCase().includes(fNfc3)) continue;
+    if(fCombo && comboLabel.toUpperCase() !== fCombo) continue;
+    const isGnp = isGnpCorpLabel(corpLabel);
+    if(gnpOnly && !isGnp) continue;
+    if(excludeGnp && isGnp) continue;
+
+    let key, label;
+    if(groupBy==='atc4'){ key=atc4Label; label=atc4Label; }
+    else if(groupBy==='molecule'){ key=molLabel; label=molLabel; }
+    else if(groupBy==='corporation'){ key=corpLabel; label=corpLabel; }
+    else if(groupBy==='nfc3'){ key=nfc3Label; label=nfc3Label; }
+    else { key=productLabel+'||'+corpLabel; label=productLabel+' ('+corpLabel.replace('*','')+')'; }
+    if(!key) continue;
+
+    let g = groups.get(key);
+    if(!g){
+      g = {label, value:{2021:0,2022:0,2023:0,2024:0,2025:0,2026:0},
+            units:{2021:0,2022:0,2023:0,2024:0,2025:0,2026:0},
+            corpSet:new Set(), corpValue2025:new Map(), gnpPresent:false, skuCount:0};
+      groups.set(key,g);
+    }
+    g.skuCount++;
+    g.corpSet.add(corpLabel);
+    if(isGnp) g.gnpPresent = true;
+    let c25 = g.corpValue2025.get(corpLabel) || 0;
+    for(const y of [2021,2022,2023,2024,2025,2026]){
+      const v = r[VAL_FIELDS[y]];
+      const u = r[UNIT_FIELDS[y]];
+      if(v!==null && v!==undefined){ g.value[y]+=v; if(y===2025) c25+=v; }
+      if(u!==null && u!==undefined){ g.units[y]+=u; }
+    }
+    g.corpValue2025.set(corpLabel, c25);
+  }
+
+  const out = [];
+  for(const g of groups.values()){
+    const v21=g.value[2021], v24=g.value[2024], v25=g.value[2025], v26=g.value[2026];
+    let cagr = null;
+    if(v21>0 && v25>0){ cagr = Math.pow(v25/v21, 1/4)-1; }
+    let yoy = null;
+    if(v24>0){ yoy = (v25-v24)/v24; }
+    let hhi = null;
+    if(v25>0){
+      let s=0;
+      for(const cv of g.corpValue2025.values()){ const share=cv/v25; s+=share*share; }
+      hhi = Math.round(s*10000);
+    }
+    if(v25 < minValue2025 && v26 < minValue2025) continue; // filter noise
+    out.push({
+      label:g.label,
+      value_2021:v21, value_2024:v24, value_2025:v25, ytd_2026:v26,
+      units_2025:g.units[2025],
+      cagr, yoy_growth:yoy, hhi,
+      player_count:g.corpSet.size,
+      sku_count:g.skuCount,
+      gnp_present:g.gnpPresent,
+      series:[g.value[2021],g.value[2022],g.value[2023],g.value[2024],g.value[2025],g.value[2026]]
+    });
+  }
+
+  const sortKeyMap = {value_2025:'value_2025', cagr:'cagr', yoy_growth:'yoy_growth', hhi:'hhi', player_count:'player_count', ytd_2026:'ytd_2026'};
+  const sk = sortKeyMap[sortBy] || 'value_2025';
+  out.sort((a,b)=>{
+    let av=a[sk], bv=b[sk];
+    if(av===null||av===undefined) av = sortDesc? -Infinity : Infinity;
+    if(bv===null||bv===undefined) bv = sortDesc? -Infinity : Infinity;
+    return sortDesc ? (bv-av) : (av-bv);
+  });
+
+  return {
+    group_by: groupBy,
+    total_groups_matched: out.length,
+    results: out.slice(0, limit),
+    note: "2026 figures (ytd_2026) are partial-year and not directly comparable to full prior years. Values are in EGP local currency. hhi (Herfindahl-Hirschman Index, 0-10000) measures market concentration among corporations within the group in 2025; below ~1500 is fragmented/competitive, above ~2500 is concentrated/monopolistic."
+  };
+}
+
+function searchTerms(field, query){
+  const dict = {atc4:DATA.atc4, molecule:DATA.molecule, corporation:DATA.corp, nfc3:DATA.nfc3}[field];
+  if(!dict) return {error:'invalid field, use atc4|molecule|corporation|nfc3'};
+  const q = (query||'').toUpperCase();
+  const matches = dict.filter(v=>v && v.toUpperCase().includes(q)).slice(0,25);
+  return {field, query, matches, match_count: matches.length};
+}
+
+/* ---------------------------- OPPORTUNITY SCORING ---------------------------- */
+function computeOpportunities(){
+  const res = analyzeMarket({group_by:'atc4', sort_by:'value_2025', sort_desc:true, min_value_2025:3000000, limit:519});
+  const rows = res.results.filter(r=>r.cagr!==null && r.hhi!==null && r.player_count>=2);
+  if(rows.length===0) return [];
+  const cagrs = rows.map(r=>r.cagr);
+  const hhis = rows.map(r=>r.hhi);
+  const minC=Math.min(...cagrs), maxC=Math.max(...cagrs);
+  const minH=Math.min(...hhis), maxH=Math.max(...hhis);
+  const norm=(v,mn,mx)=> mx>mn ? (v-mn)/(mx-mn) : 0.5;
+  rows.forEach(r=>{
+    const cScore = norm(r.cagr, minC, maxC);
+    const hScore = 1 - norm(r.hhi, minH, maxH); // low HHI = high score
+    const gScore = r.gnp_present ? 0 : 1;
+    r.opp_score = cScore*0.45 + hScore*0.30 + gScore*0.25;
+  });
+  rows.sort((a,b)=>b.opp_score-a.opp_score);
+  return rows.slice(0,9);
+}
+
+/* ---------------------------- TOOL DISPATCH (for AI agent) ---------------------------- */
+function executeTool(name, input){
+  if(name==='search_terms'){
+    return searchTerms(input.field, input.query);
+  }
+  if(name==='analyze_market'){
+    return analyzeMarket(input);
+  }
+  return {error:'unknown tool '+name};
+}
+
+/* ======================================================================
+   RENDERING — DASHBOARD
+   ====================================================================== */
+function renderKPIs(){
+  const overall = analyzeMarket({group_by:'atc4', sort_by:'value_2025', min_value_2025:0, limit:519});
+  let total25=0, total24=0, total26=0;
+  overall.results.forEach(r=>{ total25+=r.value_2025||0; total24+=r.value_2024||0; total26+=r.ytd_2026||0; });
+  const yoy = total24>0 ? (total25-total24)/total24 : null;
+  const gnp = analyzeMarket({group_by:'corporation', filters:{gnp_only:true}, sort_by:'value_2025', min_value_2025:0, limit:1});
+  const gnpAll = analyzeMarket({group_by:'product', filters:{gnp_only:true}, sort_by:'value_2025', min_value_2025:0, limit:1000});
+
+  const kpis = [
+    {v: fmtEGP(total25)+' EGP', l:'Market Value 2025', d:null},
+    {v: fmtPct(yoy), l:'YoY Growth 24→25', d:null, cls: yoy>=0?'up':'down'},
+    {v: DATA.atc4.length, l:'ATC4 Categories', d:DATA.molecule.length+' molecules tracked'},
+    {v: gnpAll.total_groups_matched, l:'GNP SKUs Tracked', d:DATA.corp.length+' corporations total'}
+  ];
+  const row = document.getElementById('kpiRow');
+  row.innerHTML = kpis.map(k=>`
+    <div class="kpi">
+      <div class="v">${k.v}</div>
+      <div class="l">${k.l}</div>
+      ${k.d ? `<div class="d">${k.d}</div>` : (k.cls?`<div class="d ${k.cls}">${k.cls==='up'?'▲':'▼'} vs 2024</div>`:'')}
+    </div>`).join('');
+}
+
+function renderOpportunities(){
+  const opps = computeOpportunities();
+  const grid = document.getElementById('oppGrid');
+  if(opps.length===0){ grid.innerHTML = '<p style="color:var(--ink-faint)">No qualifying opportunities at current thresholds.</p>'; return; }
+  grid.innerHTML = opps.map((o,i)=>{
+    const shortName = o.label.replace(/^[A-Z0-9]{5}\s*/,'').split('\n')[0];
+    const code = (o.label.match(/^[A-Z0-9]{5}/)||[''])[0].trim();
+    return `
+    <div class="opp-card" data-label="${encodeURIComponent(o.label)}" data-groupby="atc4">
+      <div class="opp-seal"><span class="n">${Math.round(o.opp_score*100)}</span><span class="u">SCORE</span></div>
+      <div class="cat">${code || 'ATC4'}</div>
+      <h3>${shortName}</h3>
+      <div class="opp-stats">
+        <div class="s">2025 Value<b>${fmtEGP(o.value_2025)}</b></div>
+        <div class="s">CAGR<b class="${o.cagr>=0?'pct up':'pct down'}">${fmtPct(o.cagr)}</b></div>
+        <div class="s">Players<b>${o.player_count}</b></div>
+      </div>
+      <div class="why">${o.gnp_present?'GNP already present.':'<b>GNP not present.</b>'} HHI ${o.hhi} (${o.hhi<1500?'fragmented':o.hhi<2500?'moderate':'concentrated'}) across ${o.sku_count} SKUs.</div>
+    </div>`;
+  }).join('');
+  grid.querySelectorAll('.opp-card').forEach(card=>{
+    card.addEventListener('click', ()=> openDrawer(decodeURIComponent(card.dataset.label), card.dataset.groupby));
+  });
+}
+
+function getFilterState(){
+  return {
+    group_by: document.getElementById('fGroupBy').value,
+    metric: document.getElementById('fMetric').value,
+    search: document.getElementById('fSearch').value.trim(),
+    scope: document.getElementById('fScope').value
+  };
+}
+
+function runExplorerQuery(){
+  const st = getFilterState();
+  const filters = {};
+  if(st.search){
+    // apply the free text search across the chosen group dimension's underlying field
+    if(st.group_by==='atc4') filters.atc4 = st.search;
+    else if(st.group_by==='molecule') filters.molecule = st.search;
+    else if(st.group_by==='corporation') filters.corporation = st.search;
+    else if(st.group_by==='nfc3') filters.nfc3 = st.search;
+    else filters.molecule = st.search; // product view: filter by molecule text as best-effort
+  }
+  if(st.scope==='gnp_only') filters.gnp_only = true;
+  if(st.scope==='exclude_gnp') filters.exclude_gnp = true;
+
+  const sortDesc = st.metric !== 'hhi'; // for HHI, ascending = more fragmented first
+  const res = analyzeMarket({group_by:st.group_by, filters, sort_by:st.metric, sort_desc:sortDesc, min_value_2025: st.group_by==='product'?100000:1000000, limit:20});
+  lastQueryResults = res.results;
+  renderMainChart(res.results, st.metric);
+  renderMainTable(res.results);
+}
+
+function renderMainChart(results, metric){
+  const ctx = document.getElementById('mainChart');
+  const labels = results.slice(0,10).map(r=> r.label.replace(/^[A-Z0-9]{5}\s*/,'').slice(0,28));
+  const metricKey = {value_2025:'value_2025', cagr:'cagr', yoy_growth:'yoy_growth', hhi:'hhi', player_count:'player_count', ytd_2026:'ytd_2026'}[metric];
+  const data = results.slice(0,10).map(r=> r[metricKey]);
+  const isPct = metric==='cagr' || metric==='yoy_growth';
+
+  if(mainChartInstance) mainChartInstance.destroy();
+  mainChartInstance = new Chart(ctx, {
+    type:'bar',
+    data:{ labels, datasets:[{ data, backgroundColor:'#1F6F4F', borderRadius:2, maxBarThickness:22 }] },
+    options:{
+      indexAxis:'y',
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(c)=> isPct ? fmtPct(c.raw) : fmtEGP(c.raw)+' EGP' } } },
+      scales:{
+        x:{ ticks:{ callback:(v)=> isPct? (v*100).toFixed(0)+'%' : fmtEGP(v), font:{family:'IBM Plex Mono', size:10} }, grid:{color:'rgba(18,36,31,0.08)'} },
+        y:{ ticks:{ font:{family:'Inter', size:11} }, grid:{display:false} }
+      }
+    }
+  });
+}
+
+function renderMainTable(results){
+  const tbody = document.getElementById('mainTbody');
+  tbody.innerHTML = results.map((r,i)=>{
+    const status = r.hhi!==null ? (r.hhi<1500?'<span class="tag frag">Fragmented</span>':(r.hhi<2500?'':'<span class="tag mono">Concentrated</span>')) : '';
+    const gnpTag = r.gnp_present ? '<span class="tag gnp">GNP</span>' : '';
+    return `<tr data-i="${i}">
+      <td>${r.label.slice(0,60)}</td>
+      <td class="num">${fmtEGP(r.value_2025)}</td>
+      <td class="num pct ${r.cagr>=0?'up':'down'}">${fmtPct(r.cagr)}</td>
+      <td class="num pct ${r.yoy_growth>=0?'up':'down'}">${fmtPct(r.yoy_growth)}</td>
+      <td class="num">${r.player_count}</td>
+      <td class="num">${r.hhi ?? '—'}</td>
+      <td>${status} ${gnpTag}</td>
+    </tr>`;
+  }).join('');
+  tbody.querySelectorAll('tr').forEach(tr=>{
+    tr.addEventListener('click', ()=>{
+      const r = lastQueryResults[+tr.dataset.i];
+      openDrawer(r.label, getFilterState().group_by);
+    });
+  });
+}
+
+document.querySelectorAll('table.data th[data-k]').forEach(th=>{
+  th.addEventListener('click', ()=>{
+    const k = th.dataset.k;
+    lastQueryResults.sort((a,b)=>{
+      let av=a[k], bv=b[k];
+      if(k==='label') return String(av).localeCompare(String(bv));
+      if(av===null) av=-Infinity; if(bv===null) bv=-Infinity;
+      return bv-av;
+    });
+    renderMainTable(lastQueryResults);
+  });
+});
+
+/* ---------------------------- DETAIL DRAWER ---------------------------- */
+function openDrawer(label, groupBy){
+  const filters = {};
+  if(groupBy==='atc4') filters.atc4 = label;
+  else if(groupBy==='molecule') filters.molecule = label;
+  else if(groupBy==='corporation') filters.corporation = label;
+  else if(groupBy==='nfc3') filters.nfc3 = label;
+  else filters.molecule = label.split(' (')[0];
+
+  const res = analyzeMarket({group_by:groupBy, filters, sort_by:'value_2025', min_value_2025:0, limit:1});
+  const r = res.results.find(x=>x.label===label) || res.results[0];
+  if(!r) return;
+
+  document.getElementById('drawerKind').textContent = groupBy.toUpperCase();
+  document.getElementById('drawerTitle').textContent = r.label.slice(0,90);
+  document.getElementById('drawerStats').innerHTML = `
+    <div class="dstat"><div class="l">2025 Value</div><div class="v">${fmtEGP(r.value_2025)}</div></div>
+    <div class="dstat"><div class="l">CAGR 21→25</div><div class="v">${fmtPct(r.cagr)}</div></div>
+    <div class="dstat"><div class="l">YoY 24→25</div><div class="v">${fmtPct(r.yoy_growth)}</div></div>
+    <div class="dstat"><div class="l">Competitors</div><div class="v">${r.player_count}</div></div>
+    <div class="dstat"><div class="l">HHI (2025)</div><div class="v">${r.hhi ?? '—'}</div></div>
+    <div class="dstat"><div class="l">SKUs</div><div class="v">${r.sku_count}</div></div>
+  `;
+  document.getElementById('drawerExtra').innerHTML = `<p style="font-size:12.5px;color:var(--ink-soft)">${r.gnp_present?'GNP already has a presence here.':'GNP has no recorded SKU in this segment.'} 2026 YTD value so far: <b>${fmtEGP(r.ytd_2026)} EGP</b> (partial year).</p>`;
+
+  const ctx = document.getElementById('drawerChart');
+  if(drawerChartInstance) drawerChartInstance.destroy();
+  drawerChartInstance = new Chart(ctx, {
+    type:'line',
+    data:{ labels:['2021','2022','2023','2024','2025','2026 YTD'], datasets:[{ data:r.series, borderColor:'#9E3527', backgroundColor:'rgba(158,53,39,0.08)', fill:true, tension:.3, pointRadius:3 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{callback:v=>fmtEGP(v), font:{family:'IBM Plex Mono', size:10}}, grid:{color:'rgba(18,36,31,0.08)'} }, x:{ ticks:{font:{family:'IBM Plex Mono', size:10}}, grid:{display:false} } } }
+  });
+
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerBackdrop').classList.add('open');
+}
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerBackdrop').classList.remove('open');
+}
+
+/* ======================================================================
+   AI AGENT — TOOL-CALLING LOOP AGAINST ANTHROPIC MESSAGES API
+   ====================================================================== */
+const TOOLS = [
+  {
+    name:"search_terms",
+    description:"Search the dataset's distinct category labels (ATC4 therapeutic category, Molecule, Corporation, or NFC3 dosage form) for names matching a partial or approximate text. Always use this before analyze_market when the user names a category, molecule, or company loosely, to find the exact label(s) actually present in the data.",
+    input_schema:{
+      type:"object",
+      properties:{
+        field:{type:"string", enum:["atc4","molecule","corporation","nfc3"]},
+        query:{type:"string", description:"Case-insensitive substring to search for"}
+      },
+      required:["field","query"]
+    }
+  },
+  {
+    name:"analyze_market",
+    description:"Aggregate the Egypt pharmaceutical market dataset (42,246 SKU-level records, 2021 to 2026 year-to-date, values in EGP) by a chosen dimension. Returns, per group: market value each year, CAGR 2021-2025, YoY growth 2024-2025, 2026 YTD value, HHI concentration score, competitor count, SKU count, and whether GNP (Global Napi Pharmaceuticals) is already present. Use this for every quantitative question about market size, growth, competition, or opportunities.",
+    input_schema:{
+      type:"object",
+      properties:{
+        group_by:{type:"string", enum:["atc4","molecule","corporation","product","nfc3"], description:"Dimension to aggregate by"},
+        filters:{
+          type:"object",
+          properties:{
+            atc4:{type:"string"}, molecule:{type:"string"}, corporation:{type:"string"}, nfc3:{type:"string"},
+            combo_type:{type:"string", enum:["MONO","COMBI","UNKNOWN"]},
+            gnp_only:{type:"boolean", description:"Only include GNP's own products"},
+            exclude_gnp:{type:"boolean", description:"Exclude GNP's own products"}
+          }
+        },
+        sort_by:{type:"string", enum:["value_2025","cagr","yoy_growth","hhi","player_count","ytd_2026"]},
+        sort_desc:{type:"boolean", description:"Default true. Set false for hhi when you want the MOST fragmented groups first."},
+        min_value_2025:{type:"number", description:"Exclude groups below this 2025 EGP value to cut noise. Default 1000000."},
+        limit:{type:"integer", description:"Max groups returned, default 15, max 50"}
+      },
+      required:["group_by"]
+    }
+  }
+];
+
+const SYSTEM_PROMPT = `You are the Formulary Analyst inside "Formulary Brain," an internal tool for Global Napi Pharmaceuticals' (GNP) Business Development team, built by Andrew Fakhry. You have live tool access to Egypt's pharmaceutical market dataset: 42,246 SKU-level records from 2021 through 2026 (2026 is year-to-date/partial), covering ATC4 therapeutic category, molecule, corporation, product, dosage form (NFC3), retail price, and annual units + LC value (EGP) sold.
+
+Your job is to find and explain business development opportunities for GNP: fast-growing molecules or categories, fragmented markets (low HHI) ripe for entry, categories where GNP is absent, first-mover openings, and competitive threats. GNP's own products appear under the corporation label containing "NAPI" (e.g. "GLOBAL NAPI*").
+
+Rules:
+- Always call analyze_market to get real numbers before making any quantitative claim. Never estimate or invent figures.
+- If the user names a category/molecule/company loosely, call search_terms first to find its exact label before filtering analyze_market, unless the question is broad/exploratory with no specific filter needed.
+- Cite concrete numbers from tool results (EGP values, CAGR %, HHI, player counts) in your answer.
+- Always note when 2026 figures are involved that they are year-to-date and not a full-year comparable.
+- Frame findings in terms of EDA (Egyptian Drug Authority) registration opportunity and first-mover advantage where relevant, matching how GNP's BD team thinks.
+- Be concise and structured: short paragraphs or tight bullet lists, business-analyst tone, no filler. Bold the single most important figure or recommendation per answer using **double asterisks**.
+- If a query returns nothing useful, say so plainly and suggest a broader search rather than guessing.`;
+
+let chatMessages = [];
+
+// CHAT_ENDPOINT: '/api/chat' is a Vercel serverless function (see /api/chat.js)
+// that holds the Anthropic API key server-side and forwards this exact body.
+// Inside Claude's own environment, api.anthropic.com can be called directly
+// with no key handling needed — swap the URL below if you're testing there.
+const CHAT_ENDPOINT = '/api/chat';
+
+async function callClaude(messages){
+  const resp = await fetch(CHAT_ENDPOINT, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model:'claude-sonnet-4-6',
+      max_tokens:1400,
+      system: SYSTEM_PROMPT,
+      tools: TOOLS,
+      messages
+    })
+  });
+  return resp.json();
+}
+
+function mdLite(text){
+  // minimal markdown: **bold**, newlines -> paragraphs, "- " lines -> list
+  const escape = s=> s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  let t = escape(text);
+  t = t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  const blocks = t.split(/\n\n+/);
+  return blocks.map(b=>{
+    const lines = b.split('\n').filter(l=>l.trim().length);
+    if(lines.every(l=>/^[-•]\s+/.test(l.trim())) && lines.length>0){
+      return '<ul>'+lines.map(l=>'<li>'+l.trim().replace(/^[-•]\s+/,'')+'</li>').join('')+'</ul>';
+    }
+    return '<p>'+lines.join('<br>')+'</p>';
+  }).join('');
+}
+
+function appendMsg(role, html, isRaw){
+  document.getElementById('aiEmpty').classList.add('hidden');
+  const scroll = document.getElementById('aiScroll');
+  const div = document.createElement('div');
+  div.className = 'msg '+role;
+  const roleLabel = role==='user' ? 'You' : 'Analyst';
+  div.innerHTML = `<div class="role">${roleLabel}</div><div class="bubble">${isRaw ? html : mdLite(html)}</div>`;
+  scroll.appendChild(div);
+  scroll.scrollTop = scroll.scrollHeight;
+  return div;
+}
+
+function appendToolBadge(name, input){
+  const scroll = document.getElementById('aiScroll');
+  const div = document.createElement('div');
+  const desc = name==='search_terms' ? `Searching “${input.query}” in ${input.field}…` : `Analyzing market: group by ${input.group_by}${input.filters&&Object.keys(input.filters).length? ' · filtered':''}…`;
+  div.innerHTML = `<div class="tool-badge"><span class="spin"></span>${desc}</div>`;
+  scroll.appendChild(div);
+  scroll.scrollTop = scroll.scrollHeight;
+}
+
+async function runAgent(userText){
+  chatMessages.push({role:'user', content:userText});
+  appendMsg('user', userText, true);
+  setSending(true);
+
+  let guard = 0;
+  try{
+    while(guard++ < 6){
+      const data = await callClaude(chatMessages);
+      if(data.error){
+        appendMsg('assistant', 'Something went wrong reaching the analyst: '+(data.error.message||JSON.stringify(data.error)), true);
+        break;
+      }
+      chatMessages.push({role:'assistant', content:data.content});
+      const textBlocks = data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n\n');
+      const toolUses = data.content.filter(b=>b.type==='tool_use');
+
+      if(textBlocks.trim()) appendMsg('assistant', textBlocks);
+
+      if(toolUses.length===0) break;
+
+      const toolResults = [];
+      for(const tu of toolUses){
+        appendToolBadge(tu.name, tu.input);
+        let result;
+        try{ result = executeTool(tu.name, tu.input); }
+        catch(e){ result = {error:String(e)}; }
+        toolResults.push({type:'tool_result', tool_use_id:tu.id, content: JSON.stringify(result)});
+      }
+      chatMessages.push({role:'user', content:toolResults});
+    }
+  }catch(e){
+    appendMsg('assistant', 'Connection error: '+e.message, true);
+  }
+  setSending(false);
+}
+
+function setSending(on){
+  document.getElementById('aiSend').disabled = on;
+  document.querySelector('.ai-status .dot').style.background = on ? '#B98A3E' : '#4CAF7D';
+  document.querySelector('.ai-status').lastChild.textContent = on ? 'Reading…' : 'Ready';
+}
+
+document.getElementById('aiSend').addEventListener('click', sendChat);
+document.getElementById('aiInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendChat(); }
+});
+document.querySelectorAll('#aiPrompts .chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{ document.getElementById('aiInput').value = chip.dataset.q; sendChat(); });
+});
+function sendChat(){
+  const el = document.getElementById('aiInput');
+  const text = el.value.trim();
+  if(!text || document.getElementById('aiSend').disabled) return;
+  el.value = '';
+  runAgent(text);
+}
+
+/* ---------------------------- FILTER WIRING ---------------------------- */
+document.getElementById('applyFilters').addEventListener('click', runExplorerQuery);
+document.getElementById('resetFilters').addEventListener('click', ()=>{
+  document.getElementById('fGroupBy').value='atc4';
+  document.getElementById('fMetric').value='value_2025';
+  document.getElementById('fSearch').value='';
+  document.getElementById('fScope').value='all';
+  runExplorerQuery();
+});
+document.getElementById('fSearch').addEventListener('keydown', e=>{ if(e.key==='Enter') runExplorerQuery(); });
+
+/* ======================================================================
+   INIT
+   ====================================================================== */
+(async function init(){
+  try{
+    await loadData();
+    renderKPIs();
+    renderOpportunities();
+    runExplorerQuery();
+    document.getElementById('loadingScreen').style.display='none';
+  }catch(e){
+    document.getElementById('loadingText').textContent = 'Failed to load data.json — '+e.message;
+  }
+})();
+</script>
+</body>
+</html>
